@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hsy.springboot.mapper.CourseMapper">
+
+    <!--学生选课，先删除后增加-->
+    <delete id="delete">
+        delete from student_course where student_id =#{studentId} and course_id=#{courseId}
+    </delete>
+    <insert id="studentCourse">
+        insert into student_course(student_id,course_id) values (#{studentId},#{courseId})
+    </insert>
+
+
+    <!--关联查询-->
+    <select id="findPage" resultType="com.hsy.springboot.entity.Course">
+        select course.*, sys_user.nickname as teacher from course
+        left join sys_user   /*左连接，处理未分配老师的情况*/
+        on course.teacher_id = sys_user.id
+        <where>
+            <if test="name!=null and name!=''">
+                and name like concat('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+</mapper>
